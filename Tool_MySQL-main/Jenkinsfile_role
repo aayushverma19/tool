@@ -1,0 +1,22 @@
+pipeline {
+  environment {
+        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_DEFAULT_REGION = 'ap-south-1'
+    }
+
+  agent  any
+        stages {
+        stage('Clone Repository') {
+            steps {
+                git url: 'https://github.com/Kaustubh9804/Tool_MySQL.git', branch: 'main'
+            }
+        }
+          
+        stage('Run the Ansible Playbook') {
+          steps {
+            sh 'ansible-playbook -i MySQL/tests/aws_ec2.yml playbook.yml'
+          }
+        }
+      }
+}
