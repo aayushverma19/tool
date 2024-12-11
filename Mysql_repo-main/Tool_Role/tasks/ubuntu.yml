@@ -1,0 +1,37 @@
+---
+- name: Install MySQL dependencies on Ubuntu
+  apt:
+    name:
+      - libaio1
+      - libnuma1
+      - libtinfo6
+    state: present
+  become: yes
+
+- name: Create symbolic link for libncurses.so.5
+  command: ln -s /lib/x86_64-linux-gnu/libncurses.so.6 /lib/x86_64-linux-gnu/libncurses.so.5
+  become: yes
+  args:
+    creates: /lib/x86_64-linux-gnu/libncurses.so.5
+
+- name: Create symbolic link for libtinfo.so.5
+  command: ln -s /lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.5
+  become: yes
+  args:
+    creates: /lib/x86_64-linux-gnu/libtinfo.so.5
+
+- name: Create symbolic link for MySQL executable
+  command: ln -s /usr/local/mysql/mysql-5.7.44-linux-glibc2.12-x86_64/bin/mysql /usr/local/bin/mysql
+  become: yes
+  args:
+    creates: /usr/local/bin/mysql
+
+- name: Update dynamic linker cache
+  command: ldconfig
+  become: yes
+
+- name: Add MySQL bin directory to PATH
+  lineinfile:
+    path: /etc/environment
+    line: 'PATH=$PATH:/usr/local/mysql/mysql-5.7.44-linux-glibc2.12-x86_64/bin'
+  become: yes
